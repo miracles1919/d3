@@ -1,0 +1,38 @@
+{
+  "name": "datav",
+  "version": "1.0.0",
+  "description": "数据大屏-移动端",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://gitlab.yuantutech.com/yuantu/dataV.git"
+  },
+  "author": "Lu Jie",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "autoprefixer": "^8.6.5",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^1.0.0",
+    "d3": "^5.5.0",
+    "file-loader": "^1.1.11",
+    "html-webpack-plugin": "^3.2.0",
+    "less": "^3.7.0",
+    "less-loader": "^4.1.0",
+    "postcss-loader": "^2.1.6",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "style-loader": "^0.21.0",
+    "webpack": "^4.15.1",
+    "webpack-cli": "^3.0.8",
+    "webpack-dev-server": "^3.1.4"
+  }
+}
