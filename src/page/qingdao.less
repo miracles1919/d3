@@ -1,3 +1,25 @@
-.flex {
-  display: flex;
+li {
+  list-style: none;
 }
+
+.container {
+  display: flex;
+
+  .legend {
+    margin-top: 30px;
+    li {
+      display: flex;
+      align-items: center;
+    }
+    i {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 5px;
+    }
+    span {
+      color: #999;
+    }
+  }
+}
+

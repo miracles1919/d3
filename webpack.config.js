@@ -30,7 +30,13 @@ module.exports = {
         test: /\.(less|css)$/,
         exclude: /node_modules/,
         use: [
-          'css-loader',
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules:true,
+            }
+          },
           'less-loader',
           'postcss-loader'
         ]
@@ -51,7 +57,7 @@ module.exports = {
 
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
-    port: 9000,
+    port: 8086,
     compress: true, // 一切服务都启用gzip 压缩
     hot: true,
     inline: true,
