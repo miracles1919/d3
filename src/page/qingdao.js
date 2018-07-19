@@ -20,16 +20,10 @@ class DataV extends React.Component {
   constructor() {
     super()
 
-    const width = 350, height = 400
-    const projection = d3.geoMercator().center([120.4651, 36.3373]).scale(10000).translate([width / 1.7, height / 2])
-    const path = d3.geoPath(projection)
     const colorArr = ['#7CDFD0', '#FE8F8C', '#BC8CEF', '#13AEEB', '#FDCB52', '#ADF3F8', '#E3C9FE', '#7CDFD0',
       '#FFECBD', '#F7B7FF', '#5BB9AB', '#FFD3D2']
     const nameArr = qdJSON.features.map(item => item.properties.name)
 
-    this.width = width
-    this.height = height
-    this.path = path
     this.colorArr = colorArr
     this.nameArr = nameArr
   }
@@ -41,11 +35,21 @@ class DataV extends React.Component {
     this.renderPie()
 
     this.renderBar()
+
+    let lineParmas = {
+      '#000': [50, 100, 200, 100, 400, 800, 100, 1000, 1200, 700, 400, 200, 20],
+      '#8EC5F9': [20, 50, 200, 150, 600, 900, 500, 1300, 1000, 800, 700, 400, 50]
+    }
+    this.renderLine(lineParmas)
   }
 
   renderMap() {
     let arr = [], centers = []
-    const { path, colorArr } = this
+    let width = 350, height = 400
+    let projection = d3.geoMercator().center([120.4651, 36.3373]).scale(10000).translate([width / 1.7, height / 2])
+    let path = d3.geoPath(projection)
+
+    const { colorArr } = this
 
     for (let i = 0; i < 12; i++) {
       arr.push(Math.floor(Math.random() * 100))
@@ -57,8 +61,8 @@ class DataV extends React.Component {
 
     const svg = d3.select('#svg')
       .append('svg')
-      .attr('width', this.width)
-      .attr('height', this.height)
+      .attr('width', width)
+      .attr('height', height)
       .attr("stroke", "#fff")
       .attr("stroke-width", 1)
       .append('g')
@@ -151,15 +155,15 @@ class DataV extends React.Component {
       .attr('height', height)
 
     let y = svg.append('g')
-    .attr('transform', `translate(${padding.left}, ${padding.top})`)
-    .call(yAxis)
+      .attr('transform', `translate(${padding.left}, ${padding.top})`)
+      .call(yAxis)
 
     y.select('path')
-    .attr('stroke', '#E8E8E8')
+      .attr('stroke', '#E8E8E8')
 
     y.selectAll('line')
-    .attr('stroke', '#E8E8E8')
-    .attr('x2', d => width - padding.left - padding.right)
+      .attr('stroke', '#E8E8E8')
+      .attr('x2', d => width - padding.left - padding.right)
 
     svg.selectAll('rect')
       .data(data)
@@ -167,7 +171,7 @@ class DataV extends React.Component {
       .append('rect')
       // .attr('class', 'rect')
       .attr('transform', `translate(${padding.left},${padding.top})`)
-      .attr('x', (d, i) => xScale(i) + 20/2)
+      .attr('x', (d, i) => xScale(i) + 20 / 2)
       .attr('y', d => yScale(d))
       .attr('width', 20)
       .attr('height', d => height - yScale(d) - padding.bottom - padding.top)
@@ -184,26 +188,109 @@ class DataV extends React.Component {
     //   .attr('transform', (d, i) => `translate(${padding.left}, ${yScale(d) + padding.top})`)
 
     let x = svg.append('g')
-    .attr('transform', `translate(${padding.left}, ${height - padding.top})`)
-    .call(xAxis)
+      .attr('transform', `translate(${padding.left}, ${height - padding.top})`)
+      .call(xAxis)
 
     x.select('path')
-    .attr('stroke', '#E8E8E8')
+      .attr('stroke', '#E8E8E8')
 
     x.selectAll('line')
-    .attr('y2', -6)
+      .attr('y2', -6)
+
+  }
+
+  renderLine(params) {
+    let width = 600, height = 400, padding = 40
+    let data = [50, 100, 200, 100, 400, 800, 100, 1000, 1200, 700, 400, 200, 20]
+    let xArr = []
+    for (let i = 0; i < 13; i++) {
+      xArr.push(`${i * 2}时`)
+    }
+
+    let max = d3.max(Object.values(params).map(item => d3.max(item)))
+
+    let
+      xScale = d3.scaleLinear().domain([0, 12]).range([0, width - padding * 2]),
+      xTxtScale = d3.scaleOrdinal().domain(xArr).range(xArr.map((item, i) => xScale(i))),
+      xAxis = d3.axisBottom(xTxtScale),
+      yScale = d3.scaleLinear().domain([0, max]).range([height - padding * 2, 0]),
+      yAxis = d3.axisLeft(yScale)
+
+    let svg = d3.select('#line')
+      .attr('width', width)
+      .attr('height', height)
+
+    svg.append('g')
+      .attr('transform', `translate(${padding}, ${padding})`)
+      .call(yAxis)
+
+    svg.append('g')
+      .attr('transform', `translate(${padding}, ${height - padding})`)
+      .call(xAxis)
+
+    let renderSingle = (data, color) => {
+
+
+      let line = d3.line()
+        .x((d, i) => xScale(i))
+        .y(d => yScale(d))
+
+      svg.append('g')
+        .attr('transform', `translate(${padding}, ${padding})`)
+        .append('path')
+        .attr('d', line(data))
+        .attr('fill', 'none')
+        .attr('stroke-width', 2)
+        .attr('stroke', color)
+
+
+      svg.append('g')
+        .attr('transform', `translate(${padding}, ${padding})`)
+        .selectAll('circle')
+        .data(data)
+        .enter()
+        .append('circle')
+        .attr('cx', (d, i) => xScale(i))
+        .attr('cy', d => yScale(d))
+        .attr('r', 3)
+        .style('fill', '#fff')
+        .attr('stroke', color)
+
+    }
+
+    Object.keys(params).forEach(key => {
+      renderSingle(params[key], key)
+    })
 
 
 
+
+
+    // let
+    //   xScale = d3.scaleLinear().domain([0, data.length - 1]).range([0, width - padding * 2]),
+    //   xTxtScale = d3.scaleOrdinal().domain(xArr).range(xArr.map((item, i) => xScale(i))),
+    //   yScale = d3.scaleLinear().domain([0, d3.max(data)]).range([height - padding * 2, 0]),
+    //   xAxis = d3.axisBottom(xTxtScale),
+    //   yAxis = d3.axisLeft(yScale)
+
+
+
+
+
+
+
+
+
+
+    console.log(xArr)
   }
 
 
   render() {
 
     const { colorArr, nameArr } = this
-    console.log(nameArr)
     return (
-      <div className={style.flex}>
+      <div>
         <div className={style.container}>
           <div className={style.legend}>
             <ul>
@@ -218,6 +305,7 @@ class DataV extends React.Component {
         </div>
         <svg id="pie"></svg>
         <svg id="bar"></svg>
+        <svg id="line"></svg>
       </div>
     )
   }
